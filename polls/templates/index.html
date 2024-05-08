@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'miotree.css' %}">
+<div class="ui center  segment">
+  <div class="ui center imagebanner ">
+    <img class="ui large imagebanner   centered image" src="{% static 'miotree_logo_long.png' %}">
+  </div>
+  <div id="families" class="ui center svgdiv segment">
+    <div id="tooltip-container" style="position: absolute;"></div>
+  </div>
+</div>
+
+<!-- impoort D3- und d3-tip-bib -->
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script>
+  var families = JSON.parse('{{ families|escapejs }}');
+ 
+</script>
+<!-- generates the miotree timeline -->
+<script src="{% static 'miotree/js/miotree.js' %}"></script>
+
+{% endblock content %}

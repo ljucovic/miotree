@@ -1,0 +1,71 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html>
+    <head>
+      {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'node_modules/fomantic-ui/dist/semantic.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'node_modules/jq-timeline/dist/jquery.timeline.min.css' %}">
+        <script type="text/javascript" src="http://code.jquery.com/jquery-latest.pack.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+<script type="text/javascript" src="https://d3js.org/d3.v7.min.js"></script>
+<script src="{% static 'node_modules/d3-tip/dist/index.js' %}" defer></script>
+<script src="{% static 'node_modules/jq-timeline/dist/jquery.timeline.min.js' %}" defer></script>
+<script src="{% static 'node_modules/fomantic-ui/dist/semantic.min.js' %}" defer></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" defer></script>
+        <title>My Project</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style type="text/css">
+          #mynetwork {
+            width: 600px;
+            height: 400px;
+            border: 1px solid lightgray;
+          }
+          .ui.menu>.item:first-child{
+            padding:0;
+          }
+          .logoHead{
+            padding: 0;
+          }
+        </style>
+      </head>
+
+    <body>
+        <header>
+          
+            <div class="ui inverted menu">
+              <a class = "logoHead item ">
+                <img class="ui mini  image" src="{% static 'miotree_only_logo2.png' %}">
+              </a>
+                <a class="active item">
+                  Home
+                </a>
+                <div class="right menu">
+                  <div class="item">
+                    <div class="ui transparent icon input">
+                      <input type="text" placeholder="Search...">
+                      <i class="search link icon"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="ui  grid">
+                <div class="row">
+                  <div class="one wide column">
+                    <img>
+                  </div>
+                  <div class="fourteen wide column">
+                    {% block content %}
+                    {% endblock content %}
+                    <p></p>
+                  </div>
+                  <div class="one wide column">
+                    <img>
+                  </div>
+                </div>
+              </div>
+        </header>
+    </body>
+</html>

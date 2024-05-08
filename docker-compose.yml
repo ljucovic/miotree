@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    volumes: 
+      - .:/usr/src/app
+      - .:/var/lib/postgresql/data
+  web_migrate:
+    extends:
+      service: web
+    command: python3 manage.py migrate
+  web_run:
+    extends:
+      service: web
+    command: python3 manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    hostname: miotime
+    restart: always

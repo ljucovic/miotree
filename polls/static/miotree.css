@@ -1,0 +1,72 @@
+.link {
+    fill: none;
+    stroke-width: 2;
+}
+
+.ui.center.imagebanner {
+    background-color: rgb(17, 17, 17)
+}
+
+.node path {
+
+    stroke: rgba(0, 0, 0, 0.673);
+    stroke-width: 3;
+    fill: rgba(255, 255, 255, 0.252);
+}
+
+.node path[class=active_path] {
+    stroke: rgba(147, 147, 147, 0.475);
+    top: 5%;
+    stroke-width: 1;
+
+}
+
+.node text {
+    visibility: visible;
+
+    font-size: larger;
+    fill: 'black';
+
+    z-index: 999;
+
+}
+
+.node div .header_tooltip {
+
+    font-size: larger;
+    z-index: 999;
+
+}
+
+.ui.segment {
+    position: initial;
+    background: #fff;
+    box-shadow: 0 1px 2px 0 rgba(34, 36, 38, .15);
+    margin: 1rem 0;
+    padding: 1em 1em;
+    border-radius: .28571429rem;
+    border: 1px solid rgba(34, 36, 38, .15);
+}
+
+.custom-segment:last-child {
+    margin-bottom: 0
+}
+
+.custom-segment:first-child {
+    margin-top: 0
+}
+
+.custom-segment {
+    position: absolute;
+    z-index: 999;
+    background-color: white;
+    background: white;
+}
+
+.alias {
+    top: -10px;
+}
+
+.domain {
+    top: -10px;
+}
