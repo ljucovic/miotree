@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'miotree.css' %}">
+
+<div class="ui segment">
+  <div class="detail-header">
+    <a href="{% url 'index' %}" class="ui labeled icon button">
+      <i class="left arrow icon"></i>
+      Zurück
+    </a>
+    <h1 class="ui header detail-title">{{ family.name }}</h1>
+  </div>
+
+  <div id="timeline-container" class="ui segment">
+    <h3 class="ui header">Timeline</h3>
+    <div id="timeline-svg"></div>
+  </div>
+
+  <div class="ui segment">
+    <h3 class="ui header">Steckbrief</h3>
+    <table class="ui celled table">
+      <tbody>
+        {% if family.alias %}
+        <tr>
+          <td><strong>Alias</strong></td>
+          <td>{{ family.alias }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+          <td><strong>Active</strong></td>
+          <td>{{ family.first_seen }} – {% if family.last_seen %}{{ family.last_seen }}{% else %}still active{% endif %}</td>
+        </tr>
+        <tr>
+          <td><strong>Parents</strong></td>
+          <td id="parents-cell"></td>
+        </tr>
+        <tr>
+          <td><strong>Botsize</strong></td>
+          <td>{{ family.bot_size }}</td>
+        </tr>
+        <tr>
+          <td><strong>Open Source</strong></td>
+          <td>{% if family.open_source %}true{% else %}false{% endif %}</td>
+        </tr>
+        <tr>
+          <td><strong>White Malware</strong></td>
+          <td>{% if family.white_malware %}true{% else %}false{% endif %}</td>
+        </tr>
+        <tr id="cpu-row" style="display:none">
+          <td><strong>CPU</strong></td>
+          <td id="cpu-cell"></td>
+        </tr>
+        <tr id="topology-row" style="display:none">
+          <td><strong>Topologie</strong></td>
+          <td id="topology-cell"></td>
+        </tr>
+        <tr id="similarity-row" style="display:none">
+          <td><strong>Code Similarity</strong></td>
+          <td id="similarity-cell"></td>
+        </tr>
+        <tr id="category-row" style="display:none">
+          <td><strong>Category</strong></td>
+          <td id="category-cell"></td>
+        </tr>
+        <tr id="attack-row" style="display:none">
+          <td><strong>Attack</strong></td>
+          <td id="attack-cell"></td>
+        </tr>
+        <tr id="info-row" style="display:none">
+          <td><strong>Info</strong></td>
+          <td id="info-cell"></td>
+        </tr>
+        <tr id="urls-row" style="display:none">
+          <td><strong>Links</strong></td>
+          <td id="urls-cell"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  var familyData = JSON.parse('{{ family_json|escapejs }}');
+</script>
+<script src="{% static 'miotree/js/family_detail.js' %}"></script>
+
+{% endblock content %}
