@@ -25,17 +25,11 @@
     visibility: visible;
 
     font-size: larger;
-    fill: 'black';
-
-    z-index: 999;
-
+    fill: black;
 }
 
 .node div .header_tooltip {
-
     font-size: larger;
-    z-index: 999;
-
 }
 
 .ui.segment {
