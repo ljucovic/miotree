@@ -65,9 +65,13 @@ class FamilyAdminForm(forms.ModelForm):
 class FamilyAdmin(admin.ModelAdmin):
     # represent the admin same, which informations are shown and in which order
     form = FamilyAdminForm
-    list_display = ('id', 'name', "parents", "open_source", "first_seen",
+    list_display = ('id', 'name', "display_parents", "open_source", "first_seen",
                     "last_seen", "white_malware", "bot_size", 'alias', )
+    filter_horizontal = ('parents',)
 
+    @admin.display(description='Parents')
+    def display_parents(self, obj):
+        return ', '.join(str(p) for p in obj.parents.all())
 
     def first_seen(self):
         d = self.first_seen

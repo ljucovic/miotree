@@ -1,67 +1,65 @@
-from django.core import serializers
 from django.http import HttpResponse
-from django.shortcuts import render
-from .models import *
+from django.shortcuts import render, get_object_or_404
+from .models import Family
 import json
 
 
 def index(request) -> HttpResponse:
     """function for index view, preparing data from db for the view"""
+    families = Family.objects.all().order_by('first_seen')
     results = []
+    for f in families:
+        parent_ids = [str(p.id) for p in f.parents.all()]
+        result = {
+            'id': str(f.id),
+            'name': f.name,
+            'alias': f.alias,
+            'first_seen': f.first_seen,
+            'last_seen': f.last_seen,
+            'bot_size': f.bot_size,
+            'open_source': f.open_source,
+            'white_malware': f.white_malware,
+            'informations': f.informations,
+        }
+        if parent_ids:
+            result['parents'] = parent_ids
+        results.append(result)
 
-    # this result needs to be prepared for the view
-    db_families = Family.objects.all()  # pylint: disable=[E1101]
-    ids = []
-
-    for f in db_families:
-        # saves the id or each family from the db
-        ids.append(f.id)
-
-    ser_families = serializers.serialize('json', db_families)
-    families = json.loads(ser_families)
-
-    for family in families:
-        # adds all the fields for each serialized family to result
-        results.append(family['fields'])
-
-    results = prepare_parents_informations(results, ids)
-
-    if isinstance(results, list) and all(isinstance(d, dict) for d in results):
-        print("Alles richtig")
-    else:
-        # results ist keine Liste von Dictionaries
-        print("Nicht alles richtig")
-
-    # sort result first_seen for the view
-    sorted_result = sorted(results, key=lambda x: x['first_seen'])
-    prepared_result = []
-    prepared_result.append(sorted_result)
-    context = {'families': json.dumps(prepared_result)}
-
+    context = {'families': json.dumps([results])}
     return render(request, 'index.html', context)
 
 
-def prepare_parents_informations(results, ids):
-    """Prepare dataset
-            1. add its id from db for each familie
-            2. translate parents from a string of parents_ids
-                separatet with a single code in an array of parents_ids"""
-    i = 0
-    for result in results:
-        # appends ids for each family
-        result['id'] = str(ids[i])
-        i += 1
-        parents = []
-        # prepared parents value for view
-        # form string separete with "," to an array
-        if result['parents'] is not None:
-            parents_raw = result.get('parents')
-            if parents_raw is not None:
-                parents = parents_raw.split(",")
+def family_detail(request, family_id) -> HttpResponse:
+    """Detail view for a single malware family."""
+    f = get_object_or_404(Family, pk=family_id)
 
-                del result['parents']  # remove old value
-                result['parents'] = parents  # add new value
-        else:
-            del result['parents']
+    parents = [{'id': p.id, 'name': p.name} for p in f.parents.all()]
 
-    return results
+    informations = f.informations
+    if isinstance(informations, str):
+        try:
+            informations = json.loads(informations)
+        except (TypeError, ValueError):
+            informations = {}
+
+    events = f.events if f.events else []
+
+    family_data = {
+        'id': f.id,
+        'name': f.name,
+        'alias': f.alias,
+        'first_seen': f.first_seen,
+        'last_seen': f.last_seen,
+        'parents': parents,
+        'bot_size': f.bot_size,
+        'open_source': f.open_source,
+        'white_malware': f.white_malware,
+        'informations': informations,
+        'events': events,
+    }
+
+    context = {
+        'family': f,
+        'family_json': json.dumps(family_data),
+    }
+    return render(request, 'family_detail.html', context)

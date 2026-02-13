@@ -82,11 +82,12 @@ class Family(models.Model):
         max_length=7, validators=[validate_year_month])
     last_seen = models.CharField(max_length=7, validators=[
                                  validate_year_month], null=True, blank=True)
-    parents = models.CharField(max_length=200, null=True, blank=True)
+    parents = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='children')
     bot_size = models.BigIntegerField(default=0)
     open_source = models.BooleanField(default=False)
     white_malware = models.BooleanField(default=False)
     informations = models.JSONField(default=default_json, null=True, blank=True)
+    events = models.JSONField(default=list, blank=True)
 
     def save(self, *args, **kwargs):
         # Convert JSON object to string before saving to database
