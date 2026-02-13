@@ -38,26 +38,45 @@ document.addEventListener('DOMContentLoaded', function() {
   const endDateStr = d3.timeFormat('%Y-%m')(endDate);
 
   const div = d3.select('.svgdiv').node();
-  // Append SVG element scaled to fit viewport
-  const svg = d3.select('.svgdiv')
-    .append('svg')
-    .attr('viewBox', `0 0 ${div.clientWidth} ${totalHeight}`);
+
+  // --- Sticky axis: separate SVG above the tree ---
+  const axisHeight = 40;
+  const stickyDiv = d3.select('.svgdiv')
+    .insert('div', ':first-child')
+    .attr('id', 'sticky-axis')
+    .style('position', 'sticky')
+    .style('top', '0')
+    .style('z-index', '10')
+    .style('background', 'white')
+    .style('border-bottom', '1px solid #e0e0e0');
+
+  const axisSvg = stickyDiv.append('svg')
+    .attr('width', div.clientWidth)
+    .attr('height', axisHeight);
 
   // Create x scale
   const xScale = d3.scaleTime()
     .range([10, div.clientWidth - 30])
     .domain([startDate, endDate]);
 
-  // Create x axis
+  // Draw axis in the sticky SVG
   const xAxis = d3.axisBottom(xScale)
     .tickFormat(function (d) { return d3.timeFormat("%Y")(d); })
     .ticks(d3.timeMonth.every(12));
 
-  const graphGroup = svg.append('g')
+  axisSvg.append('g')
     .attr("class", "x-axis")
-    .attr("y", "60")
-    .attr("transform", `translate(50, ${150})`)
+    .attr("transform", `translate(50, ${axisHeight - 10})`)
     .call(xAxis);
+
+  // Main tree SVG (no axis inside)
+  const svg = d3.select('.svgdiv')
+    .append('svg')
+    .attr('viewBox', `0 0 ${div.clientWidth} ${totalHeight}`);
+
+  const graphGroup = svg.append('g')
+    .attr("class", "tree-content")
+    .attr("transform", `translate(50, ${20})`);
 
   // Prepend an empty level for the pseudo root node.
   // Note: levels contains a single sub-array with all families,
@@ -82,11 +101,86 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   const nodes = levels.flat();
-  const colours = d3.scaleOrdinal()
-    .domain(nodes.filter(n => n.parents)
-      .map(n => n.parents.sort()
-        .join("-")))
-    .range(d3.schemePaired);
+
+  // --- Branch color scheme: dynamic by branch size, logo colors ---
+  function getRootAncestor(treeNode) {
+    let current = treeNode;
+    while (current.parent && !current.parent.id.startsWith('pseudo-')) {
+      current = current.parent;
+    }
+    return current;
+  }
+
+  function getDepthInBranch(treeNode) {
+    let depth = 0;
+    let current = treeNode;
+    while (current.parent && !current.parent.id.startsWith('pseudo-')) {
+      depth++;
+      current = current.parent;
+    }
+    return depth;
+  }
+
+  // Will be populated after tree is built — maps rootId → base color
+  const branchColorMap = {};
+
+  // Harmonious palette: logo pink, logo cyan, then blends between them
+  const PALETTE = [
+    '#e91e8c',  // Pink (logo)
+    '#00bcd4',  // Cyan (logo)
+    '#7a3fb5',  // Purple (between pink & cyan)
+    '#2979b0',  // Steel blue
+    '#c2185b',  // Deep rose
+    '#0097a7',  // Teal
+    '#ab47bc',  // Orchid
+    '#5c6bc0',  // Indigo
+    '#26a69a',  // Mint
+    '#ec407a',  // Light pink
+  ];
+
+  function assignBranchColors(rootNode) {
+    // Find all root branches (direct non-pseudo children of pseudo nodes)
+    const rootBranches = rootNode.children
+      ? rootNode.children.filter(c => !c.id.startsWith('pseudo-'))
+      : [];
+
+    // Also collect roots from pseudo children
+    rootNode.descendants().forEach(n => {
+      if (n.id.startsWith('pseudo-') && n.children) {
+        n.children.forEach(c => {
+          if (!c.id.startsWith('pseudo-') && !rootBranches.includes(c)) {
+            rootBranches.push(c);
+          }
+        });
+      }
+    });
+
+    // Count total descendants per root branch
+    const branchSizes = rootBranches.map(b => ({
+      id: b.id,
+      size: b.descendants().length
+    }));
+
+    // Sort biggest first
+    branchSizes.sort((a, b) => b.size - a.size);
+
+    // Assign colors from palette by size rank
+    branchSizes.forEach((branch, i) => {
+      branchColorMap[branch.id] = PALETTE[i % PALETTE.length];
+    });
+  }
+
+  function getBranchColor(treeNode) {
+    const rootNode = getRootAncestor(treeNode);
+    const baseColor = branchColorMap[rootNode.id] || '#9e9e9e';
+    const depth = getDepthInBranch(treeNode);
+
+    // Strong gradation: lighter + less saturated per generation
+    const hsl = d3.hsl(baseColor);
+    hsl.l = Math.min(0.85, hsl.l + depth * 0.1);
+    hsl.s = Math.max(0.25, hsl.s - depth * 0.08);
+    return hsl.formatHex();
+  }
 
   function getLinks(nodes) {
     return nodes
@@ -228,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .append("path")
       .attr("class", "link")
       .merge(link)
-      .attr("stroke", d => colours(d.target.data.parents.sort().join("-")))
+      .attr("stroke", d => getBranchColor(d.target))
       .attr("d", linkFn);
 
     const node = graphGroup.selectAll(".node")
@@ -256,6 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .attr("class", "ui label tooltip_text")
       .style("fill", "currentcolor")
       .style("text-anchor", "start")
+      .style("cursor", "pointer")
       .text(d => d.data.name)
       .call(getBB);
     newNode.insert("rect", "text")
@@ -265,7 +360,8 @@ document.addEventListener('DOMContentLoaded', function() {
       .attr("width", function (d) { return d.bbox.width; })
       .attr("height", function (d) { return d.bbox.height; })
       .style("fill", "white")
-      .style("fill-opacity", 0.7);
+      .style("fill-opacity", 0.7)
+      .style("pointer-events", "none");
 
     let tooltip = newNode.append("foreignObject");
     tooltip = tooltip.attr("class", "mytooltip")
@@ -369,7 +465,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             ${informations && informations.info ? `<tr><td data-label="Info">Info</td><td data-label="info_value">  ${informations.info}</td></tr>` : ``}
                             ${informations && urlsHtml ? `<tr><td data-label="Info">Links</td><td data-label="urls_value">  ${urlsHtml}</td></tr>` : ``}
                           </tbody>
-                        </table>`;
+                        </table>
+                        <a href="/family/${d.data.id}/" class="ui primary button" style="margin-top:5px;">Details</a>`;
 
         const tooltipContainer = d3.select("#tooltip-container");
         // Clear previous tooltip content before adding new
@@ -435,6 +532,9 @@ document.addEventListener('DOMContentLoaded', function() {
             .style("visibility", "hidden");
           return tooltipContainer;
         }
+      })
+      .on("click", function (event, d) {
+        window.location.href = "/family/" + d.data.id + "/";
       });
   }
 
@@ -493,6 +593,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const root = d3.stratify()
     .parentId(d => d.parent)
     (nodes);
+
+  // Assign branch colors dynamically by branch size
+  assignBranchColors(root);
 
   // Map the different sets of parents,
   // assigning each parent an array of partners

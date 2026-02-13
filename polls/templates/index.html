@@ -7,8 +7,10 @@
   <div class="ui center imagebanner ">
     <img class="ui large imagebanner   centered image" src="{% static 'miotree_logo_long.png' %}">
   </div>
-  <div id="families" class="ui center svgdiv segment">
-    <div id="tooltip-container" style="position: absolute;"></div>
+  <div id="tree-scroll-container" style="max-height: 85vh; overflow-y: auto; position: relative;">
+    <div id="families" class="ui center svgdiv segment" style="margin: 0; border: none; box-shadow: none;">
+      <div id="tooltip-container" style="position: absolute;"></div>
+    </div>
   </div>
 </div>
 
