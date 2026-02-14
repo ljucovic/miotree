@@ -1,5 +1,5 @@
 # README
-## mIoTime 
+## mIoTree
 ![mIoTree](/_pictures/miotree_logo_background.png) <br>
 
 # Praxisseminar - mIoTree
@@ -11,9 +11,9 @@ In this version v1.0.1 we habe 100 diffrent iot-maleware-families tracked.
 
 
 ____________
-#### Miotree
+#### mIoTree
 
-Miotree is django webapplication. It use django, saves it data in SQLLite and use d3.js + Formantic-UI for the graphics view.
+mIoTree is django webapplication. It use django, saves it data in SQLLite and use d3.js + Formantic-UI for the graphics view.
 
 ### Used technlogies
 - Django 4.2.1
