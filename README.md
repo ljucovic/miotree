@@ -1,9 +1,8 @@
 # README
-## mIoTime <img src="/_picture/miotree_logo_background.png" width="100"> <br>
+## mIoTime ![mIoTree](/_picture/miotree_logo_background.png) <br>
 
 # Praxisseminar - mIoTree
 
-<img src="/_picture/miotree_logo_background.png" width="600"> <br>
 mIoTree is a web-based application that uses a database to visualize IoT malware families in a tree diagram, combined with a timeline.<br>
 In this version v1.0.1 we habe 100 diffrent iot-maleware-families tracked. 
 
