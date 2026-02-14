@@ -1,5 +1,6 @@
 # README
-## mIoTime ![mIoTree](/_picture/miotree_logo_background.png) <br>
+## mIoTime 
+![mIoTree](/_picture/miotree_logo_background.png) <br>
 
 # Praxisseminar - mIoTree
 
