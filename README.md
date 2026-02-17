@@ -2,13 +2,21 @@
 ## mIoTree
 ![mIoTree](/_pictures/miotree_logo_background.png) <br>
 
-# Praxisseminar - mIoTree
-
-mIoTree is a web-based application that uses a database to visualize IoT malware families in a tree diagram, combined with a timeline.<br>
-In this version v1.0.1 we habe 100 diffrent iot-maleware-families tracked. 
+mIoTree is a knowledge database with interactive visualization for IoT malware families. It uses a tree diagram combined with a timeline to map out the genealogy and evolution of IoT malware.<br>                                        
+In this version v1.0.1 we have over 100 different IoT malware families tracked.                                                                                                          
+**Note:** All screenshots and images in this repository are for demonstration purposes only.   
 
 ![IoT Malware Families - Overview](/_pictures/timeline.png)
 
+## Features                                         
+                                                                                                                        
+### Hover for Details                               
+Hover over any malware family name to reveal a tooltip with detailed information such as parent relationships, CPU architectures, botnet size, open-source status, and more.<br>                                                           
+![Hover function](/_pictures/mIoTree_Hover.png)                                                                           
+                                                                                                                        
+### Family Detail Timeline                        
+Click on a family name or the "Details" button in the hover tooltip to navigate to a dedicated timeline page for that family. This timeline tracks attacks, news, and notable incidents associated with the selected malware family.       
+![Detail function](/_pictures/Detail_view.png)    
 
 ____________
 #### mIoTree
@@ -21,7 +29,6 @@ mIoTree is django webapplication. It use django, saves it data in SQLLite and us
 - d3.js V7
 - SQLLite 3.40.1
 - python3
-
 
 # Run on docker
 Download the Project. Run Docker-compose with `docker-compose up -d`. 
@@ -40,10 +47,6 @@ Create a virtualenv activate it and run `python3 manage.py migrate` and `python3
 
 Now you can reach miotree on http://127.0.0.1:8000.
 
-# Functions
-## Hover to get informations
-Hover over a family name to get usefull informations.<br>
-![Hover function](/_pictures/miotreehover.png)
 
 ## Add new Families
 To add new families you can use the admin side on http://127.0.0.1:8000/admin/polls/family/

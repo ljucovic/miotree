@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Height and width for the svg image
   const svgWidth = 2000;
-  const minNodeSpacing = 28;
+  const minNodeSpacing = 20;
   const nodeCount = levels.flat().length;
   const svgHeight = Math.max(1000, nodeCount * minNodeSpacing);
   const totalWidth = svgWidth + margins.left + margins.right;
@@ -177,8 +177,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Strong gradation: lighter + less saturated per generation
     const hsl = d3.hsl(baseColor);
-    hsl.l = Math.min(0.85, hsl.l + depth * 0.1);
-    hsl.s = Math.max(0.25, hsl.s - depth * 0.08);
+    hsl.l = Math.min(0.85, hsl.l + depth * 0.15);
+    hsl.s = Math.max(0.2, hsl.s - depth * 0.12);
     return hsl.formatHex();
   }
 
@@ -641,7 +641,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // when they are close vertically AND their horizontal ranges intersect.
   // Runs multiple passes until all overlaps are resolved.
   const labelWidth = 120;
-  const minVerticalGap = 20;
+  const minVerticalGap = 15;
   const visibleNodes = laidOutRoot.descendants()
     .filter(n => !n.id.startsWith("pseudo-"));
 
