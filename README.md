@@ -37,14 +37,6 @@ Download the Project. Run Docker-compose with `docker-compose up -d`.
 Download the project.
 Create a virtualenv activate it and run `python3 manage.py migrate` and `python3 manage.py runserver`
 
-## Example: On Mac
-1. clone the project with `git clone ***REMOVED***`
-2. move into the folder miotree `cd miotree/`
-3. install virtualenv and run `virtualenv miotree`
-4. activate miortree `source miotree/bin/activate`
-5. migrate everything `python3 manage.py migrate`
-6. run miotree with `python3 manage.py runserver`
-
 Now you can reach miotree on http://127.0.0.1:8000.
 
 
